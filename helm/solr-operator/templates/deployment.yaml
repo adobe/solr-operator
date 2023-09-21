@@ -120,10 +120,16 @@ spec:
           - containerPort: 8080
             name: metrics
         {{- end }}
-      {{- if (include "solr-operator.mTLS.volumes" .) }}
+
       volumes:
+        - emptyDir: {}
+          name: sandbox-volume
+        {{- if (include "solr-operator.mTLS.volumes" .) }}   
         {{- include "solr-operator.mTLS.volumes" . | nindent 8 }}
-      {{- end }}
+        {{- end }}
+        {{- if .Values.volumes }}
+        {{- .Values.volumes | toYaml | nindent 8 }}
+        {{- end }}
 
       {{- if .Values.sidecarContainers }}
       {{ toYaml .Values.sidecarContainers | nindent 6 }}
